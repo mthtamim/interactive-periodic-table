@@ -1,0 +1,6 @@
+{
+  "name": "Interactive Periodic Table",
+  "description": "An interactive periodic table of elements built with React and Tailwind CSS. Click on an element to see its detailed properties. Color-coded by element category for easy visualization. Now supports English and Bengali.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

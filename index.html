@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interactive Periodic Table</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class', // Enable class-based dark mode
+        theme: {
+          extend: {
+            colors: {
+              'alkali-metal': '#f9a825',
+              'alkaline-earth-metal': '#fdd835',
+              'lanthanide': '#c0ca33',
+              'actinide': '#7cb342',
+              'transition-metal': '#43a047',
+              'post-transition-metal': '#1e88e5',
+              'metalloid': '#00acc1',
+              'reactive-nonmetal': '#5e35b1',
+              'noble-gas': '#d81b60',
+              'unknown': '#757575'
+            }
+          }
+        }
+      }
+    </script>
+  <style>
+      @keyframes rotate-clockwise {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.1); opacity: 0.8; }
+      }
+      .nucleus-pulse-animation {
+        animation: pulse 3s ease-in-out infinite;
+        transform-origin: center;
+      }
+      @keyframes float-animation {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-6px); }
+      }
+      .animate-float {
+        animation: float-animation 4s ease-in-out infinite;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@0.14.0"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
