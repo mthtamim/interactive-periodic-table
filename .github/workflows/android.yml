@@ -1,0 +1,79 @@
+name: Build APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build web app
+        run: npm run build
+
+      - name: Add Android platform
+        run: npx cap add android
+
+      - name: Sync web assets to Android
+        run: npx cap sync android
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Accept Android SDK licenses
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
+
+      - name: Install Android SDK 36
+        run: |
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-36" "build-tools;36.0.0"
+
+      - name: Build debug APK
+        run: |
+          chmod +x android/gradlew
+          cd android && ./gradlew assembleDebug --stacktrace
+
+      - name: Rename APK
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk PeriodicTable.apk
+
+      - name: Upload APK as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PeriodicTable-apk
+          path: PeriodicTable.apk
+          retention-days: 90
+
+      - name: Publish APK to Release v1.0.0
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.0
+          name: Periodic Table v1.0.0
+          body: |
+            Interactive Periodic Table v1.0.0 — Android অ্যাপ (debug APK):
+
+            • ১১৮টি মৌলের ইন্টারেক্টিভ সারণী, ক্যাটাগরি অনুযায়ী রঙ
+            • মৌলের বিস্তারিত তথ্য, আইসোটোপ, কোয়ান্টাম মডেল
+            • সার্চ, ফিল্টার, দুটো মৌলের তুলনা
+            • বাংলা / ইংরেজি ভাষা, লাইট / ডার্ক থিম
+            • Gemini চ্যাটবট আছে, তবে এই APK-তে কোনো API key দেওয়া নেই — key ছাড়া চ্যাটবট error দেখাবে, সারণী পুরো চলবে
+
+            নোট: ডিজাইনের জন্য ইন্টারনেট লাগবে (Tailwind CDN থেকে লোড হয়)।
+          files: PeriodicTable.apk
