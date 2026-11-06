@@ -33,6 +33,11 @@ jobs:
       - name: Sync web assets to Android
         run: npx cap sync android
 
+      - name: Apply permanent debug signing key
+        run: |
+          base64 -d debug.keystore.b64 > android/app/debug.keystore
+          python3 scripts/apply-debug-signing.py android/app/build.gradle
+
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
